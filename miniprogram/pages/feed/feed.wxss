@@ -1,0 +1,4 @@
+@import '../../styles/common.wxss';
+.title-row { padding-right: 8rpx; }
+.kg-label { color: #8e8e93; font-size: 24rpx; padding: 0 32rpx 8rpx; }
+.row { position: relative; }

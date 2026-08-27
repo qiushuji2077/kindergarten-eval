@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="title-row">
+    <view>
+      <view class="title">观察</view>
+      <view class="kg-label">{{kgHint}}</view>
+    </view>
+    <view class="plus" bindtap="goCompose">+</view>
+  </view>
+  <input class="search" placeholder="搜索幼儿姓名" value="{{q}}" bindinput="onSearch" />
+  <view class="lead">点一条记录可回去改文字、补照片。观察时间不能改。带「AI」的条目已由混元对应《指南》。</view>
+  <view class="empty" wx:if="{{loading}}">加载中</view>
+  <view class="empty" wx:elif="{{!groups.length}}">还没有观察记录</view>
+  <block wx:for="{{groups}}" wx:key="key">
+    <view class="section">{{item.label}}</view>
+    <view class="group">
+      <view class="row" wx:for="{{item.items}}" wx:for-item="obs" wx:key="id" data-id="{{obs.id}}" bindtap="openEdit">
+        <view class="row-body">
+          <view class="row-title">{{obs.childNames}}</view>
+          <view class="row-excerpt">{{obs.excerpt}}</view>
+          <view class="row-meta">{{obs.meta}}</view>
+        </view>
+        <image wx:if="{{obs.thumb}}" class="thumb" src="{{obs.thumb}}" mode="aspectFill" />
+      </view>
+    </view>
+  </block>
+</view>

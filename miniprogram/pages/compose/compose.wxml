@@ -1,0 +1,71 @@
+<view class="page">
+  <textarea
+    class="area"
+    placeholder="点这里写。键盘上可直接用微信语音转成文字。"
+    value="{{narrative}}"
+    bindinput="onText"
+    confirm-type="done"
+    adjust-position="{{true}}"
+    hold-keyboard="{{true}}"
+    show-confirm-bar="{{true}}"
+    maxlength="2000"
+  />
+  <view class="tools">
+    <button class="tool" hover-class="none" bindtap="chooseShot">照片/视频</button>
+    <button
+      class="tool {{listening ? 'on' : ''}}"
+      hover-class="none"
+      bindtouchstart="voiceStart"
+      bindtouchend="voiceEnd"
+      bindtouchcancel="voiceEnd"
+      catchtouchmove="voiceMove"
+    >{{listening ? '松手完成' : '按住说话'}}</button>
+  </view>
+  <view class="recording" wx:if="{{listening}}">正在听，松开后会转成文字</view>
+  <view class="hint">{{hint}}</view>
+  <view class="preview" wx:if="{{files.length}}">
+    <view class="thumb-wrap" wx:for="{{files}}" wx:key="id">
+      <image wx:if="{{item.kind === 'photo'}}" src="{{item.path}}" mode="aspectFill" />
+      <view wx:elif="{{item.kind === 'audio'}}" class="audio-tile">声</view>
+      <video wx:else src="{{item.path}}" object-fit="cover" controls="{{false}}" show-center-play-btn="{{false}}" />
+      <view class="x" catchtap="removeFile" data-id="{{item.id}}">×</view>
+    </view>
+  </view>
+  <view class="section">观察对象</view>
+  <view class="chip-wrap">
+    <view class="chip {{item.on ? 'on' : ''}} {{editing ? 'locked' : ''}}" wx:for="{{kids}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleKid">{{item.name}}</view>
+  </view>
+  <view class="section">时间</view>
+  <view class="group">
+    <view class="cell">
+      <text class="name">观察时间</text>
+      <view class="time-box">
+        <text class="clock">{{clock}}</text>
+        <text class="frozen-tag" wx:if="{{frozen}}">已冻结</text>
+      </view>
+    </view>
+  </view>
+  <view class="section">{{matchTitle}}</view>
+  <view class="interpret" wx:if="{{interpret}}">{{interpret}}</view>
+  <view class="empty" wx:if="{{!hits.length}}" style="padding: 20rpx 32rpx; text-align: left;">写实录后，会对应到《3—6岁指南》。云开发 AI 不可用时，改用字段捕捉。</view>
+  <view class="hit" wx:for="{{hits}}" wx:key="id">
+    <view class="hit-title">{{item.domain}} · {{item.goal}}</view>
+    <view class="hit-sub">{{item.area}} · {{item.sourceLabel}}{{item.keywordText ? ' · 捕捉：' + item.keywordText : ''}}{{item.reason ? ' · ' + item.reason : ''}}</view>
+  </view>
+  <view class="error" wx:if="{{error}}">{{error}}</view>
+  <view class="btn {{canPost ? '' : 'ghost'}}" bindtap="submit">{{submitText}}</view>
+  <view class="privacy-mask" wx:if="{{showPrivacy}}">
+    <view class="privacy-card">
+      <view class="privacy-title">{{privacyContractName}}</view>
+      <view class="privacy-body">拍照、选相册或录音前，需要同意隐私保护指引。幼儿观察照片仅用于本班记录和导出报告。</view>
+      <view class="privacy-link" bindtap="openPrivacyDoc">查看全文</view>
+      <button
+        id="agree-privacy-btn"
+        class="privacy-ok"
+        open-type="agreePrivacyAuthorization"
+        bindagreeprivacyauthorization="onAgreePrivacy"
+      >同意</button>
+      <view class="privacy-no" bindtap="onDisagreePrivacy">不同意</view>
+    </view>
+  </view>
+</view>

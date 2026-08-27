@@ -1,0 +1,12 @@
+node_modules/
+dist/
+data/
+*.db
+*.db-*
+.DS_Store
+uploads/
+client/dist/
+server/data/
+.env
+.env.*
+*.local
