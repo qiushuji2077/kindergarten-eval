@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/login/login",
     "pages/feed/feed",
+    "pages/login/login",
     "pages/compose/compose",
     "pages/kids/kids",
     "pages/export/export",
@@ -44,7 +44,7 @@
   },
   "permission": {
     "scope.camera": {
-      "desc": "用于拍摄幼儿观察照片和视频"
+      "desc": "用于拍摄幼儿观察照片"
     },
     "scope.record": {
       "desc": "用于观察时录音，以及把说话转成文字"

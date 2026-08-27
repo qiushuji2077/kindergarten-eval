@@ -1,4 +1,5 @@
 const { request, downloadReport } = require('../../utils/api');
+const { ensureSession } = require('../../utils/session');
 
 const OPEN_HINT = '点幼儿姓名后会打开文件。打开后点右上角 ···，发给「文件传输助手」或存到手机。';
 
@@ -10,16 +11,14 @@ Page({
     hint: OPEN_HINT,
   },
   onShow() {
-    const session = wx.getStorageSync('session');
-    if (!session) {
-      wx.redirectTo({ url: '/pages/login/login' });
-      return;
-    }
-    this.session = session;
-    this.setData({
-      kindergartenName: session.kindergartenName || '',
-    });
-    request(`/api/children?classId=${session.classId}`)
+    ensureSession()
+      .then((session) => {
+        this.session = session;
+        this.setData({
+          kindergartenName: session.kindergartenName || '',
+        });
+        return request(`/api/children?classId=${session.classId}`);
+      })
       .then((list) => this.setData({ list, error: '' }))
       .catch((e) => this.setData({ error: e.message }));
   },
@@ -80,7 +79,6 @@ Page({
       });
   },
   logout() {
-    wx.removeStorageSync('session');
-    wx.redirectTo({ url: '/pages/login/login' });
+    wx.navigateTo({ url: '/pages/login/login' });
   },
 });

@@ -1,16 +1,16 @@
 const { request } = require('../../utils/api');
+const { ensureSession } = require('../../utils/session');
 
 Page({
   data: { list: [], className: '', name: '', error: '' },
   onShow() {
-    const session = wx.getStorageSync('session');
-    if (!session) {
-      wx.redirectTo({ url: '/pages/login/login' });
-      return;
-    }
-    this.session = session;
-    this.setData({ className: session.className });
-    this.load();
+    ensureSession()
+      .then((session) => {
+        this.session = session;
+        this.setData({ className: session.className });
+        this.load();
+      })
+      .catch((e) => this.setData({ error: e.message }));
   },
   load() {
     request(`/api/children?classId=${this.session.classId}`).then((list) => this.setData({ list }));

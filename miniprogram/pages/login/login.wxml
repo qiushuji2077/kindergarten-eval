@@ -1,6 +1,6 @@
 <view class="page">
   <view class="title">观察记录</view>
-  <view class="lead">把孩子正在做的事记下来。系统会对应到《3—6岁指南》。</view>
+  <view class="lead">把孩子正在做的事记下来。系统会对应到《3—6岁指南》。打开即可浏览记录，不必先授权登录。</view>
   <view class="section">园所名称</view>
   <input class="search" placeholder="写入报告封面，可不填" value="{{kindergartenName}}" bindinput="onKgName" />
   <view class="lead">不填则封面只写「幼儿园」。演示班可直接进入。</view>
@@ -18,16 +18,12 @@
       <text class="mark" wx:if="{{teacherId === item.id}}">已选</text>
     </view>
   </view>
-  <view class="agree {{agreed ? 'on' : ''}}" bindtap="toggleAgree">
-    <view class="box">{{agreed ? '✓' : ''}}</view>
-    <view class="agree-text">
-      已阅读并同意
-      <text class="link" catchtap="openPrivacy">《隐私保护指引》</text>
-      和
-      <text class="link" catchtap="openTerms">《用户服务协议》</text>
-    </view>
+  <view class="link-row">
+    <text class="link" bindtap="openPrivacy">隐私保护指引</text>
+    <text> · </text>
+    <text class="link" bindtap="openTerms">用户服务协议</text>
   </view>
-  <view class="btn {{agreed ? '' : 'ghost'}}" bindtap="enter">进入</view>
+  <view class="btn" bindtap="enter">进入所选班级</view>
   <view class="link-row" bindtap="openAbout">使用说明</view>
   <view class="error" wx:if="{{error}}">{{error}}</view>
 </view>

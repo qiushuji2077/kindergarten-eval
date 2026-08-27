@@ -2,6 +2,7 @@ const { request, uploadMedia, persistFiles } = require('../../utils/api');
 const localStore = require('../../utils/localStore');
 const { clockLabel, clockLabelFromIso, isoLocal } = require('../../utils/clock');
 const privacy = require('../../utils/privacy');
+const { ensureSession } = require('../../utils/session');
 
 function authLabel(v) {
   if (v === true) return '已开';
@@ -48,17 +49,16 @@ Page({
     privacyContractName: '《用户隐私保护指引》',
   },
   onLoad(options) {
-    this.session = wx.getStorageSync('session');
-    if (!this.session) {
-      wx.redirectTo({ url: '/pages/login/login' });
-      return;
-    }
     this.editId = (options && options.id) || '';
     this.frozenAt = '';
     this.frozenChildIds = [];
     this.setData({ clock: clockLabel() });
     privacy.bindPrivacyAuthorization(this);
-    request(`/api/children?classId=${this.session.classId}`)
+    ensureSession()
+      .then((session) => {
+        this.session = session;
+        return request(`/api/children?classId=${this.session.classId}`);
+      })
       .then((list) => {
         this.patch({ kids: (list || []).map((k) => ({ ...k, on: false })) });
         if (this.editId) this.loadEdit(this.editId);
@@ -188,7 +188,7 @@ Page({
     const extra = (tempFiles || []).map((f, i) => ({
       id: `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 6)}`,
       path: f.tempFilePath,
-      kind: f.fileType === 'video' ? 'video' : 'photo',
+      kind: 'photo',
     }));
     this.patch({ files: this.data.files.concat(extra).slice(0, 9), error: '' });
   },
@@ -222,9 +222,8 @@ Page({
       .then(() => {
         wx.chooseMedia({
           count: 9 - this.data.files.length,
-          mediaType: ['image', 'video'],
+          mediaType: ['image'],
           sourceType: ['camera', 'album'],
-          maxDuration: 60,
           camera: 'back',
           success: (res) => this.addTempFiles(res.tempFiles),
           fail: (err) => {

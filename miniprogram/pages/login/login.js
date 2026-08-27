@@ -1,4 +1,5 @@
 const { request } = require('../../utils/api');
+const { writeSession } = require('../../utils/session');
 
 Page({
   data: {
@@ -8,30 +9,30 @@ Page({
     teacherId: '',
     kindergartenName: '',
     error: '',
-    agreed: false,
   },
   onLoad() {
     const lastKg = wx.getStorageSync('kindergartenName') || '';
-    const agreed = !!wx.getStorageSync('privacyAgreed');
-    this.setData({ kindergartenName: lastKg, agreed });
-    const session = wx.getStorageSync('session');
-    if (session && session.teacherId && agreed) {
-      wx.switchTab({ url: '/pages/feed/feed' });
-      return;
-    }
+    const session = wx.getStorageSync('session') || {};
+    this.setData({
+      kindergartenName: lastKg || session.kindergartenName || '',
+      classId: session.classId || '',
+      teacherId: session.teacherId || '',
+    });
     this.load();
   },
   load() {
     Promise.all([request('/api/classes'), request('/api/teachers')])
       .then(([classes, teachers]) => {
-        const classId = classes[0] ? classes[0].id : '';
+        const classId = this.data.classId || (classes[0] ? classes[0].id : '');
         const classTeachers = teachers.filter((t) => !classId || t.class_id === classId);
+        const teacherId =
+          (classTeachers.find((t) => t.id === this.data.teacherId) || classTeachers[0] || {}).id || '';
         this.setData({
           classes,
           allTeachers: teachers,
           teachers: classTeachers,
           classId,
-          teacherId: classTeachers[0] ? classTeachers[0].id : '',
+          teacherId,
         });
       })
       .catch((e) => this.setData({ error: e.message }));
@@ -51,11 +52,6 @@ Page({
   pickTeacher(e) {
     this.setData({ teacherId: e.currentTarget.dataset.id });
   },
-  toggleAgree() {
-    const agreed = !this.data.agreed;
-    this.setData({ agreed, error: '' });
-    wx.setStorageSync('privacyAgreed', agreed);
-  },
   openPrivacy() {
     wx.navigateTo({ url: '/pages/legal/privacy' });
   },
@@ -66,15 +62,14 @@ Page({
     wx.navigateTo({ url: '/pages/about/about' });
   },
   enter() {
-    if (!this.data.agreed) {
-      this.setData({ error: '请先阅读并同意隐私保护指引' });
-      return;
-    }
     const cls = this.data.classes.find((c) => c.id === this.data.classId);
     const teacher = (this.data.allTeachers || this.data.teachers).find(
       (t) => t.id === this.data.teacherId,
     );
-    if (!cls || !teacher) return;
+    if (!cls || !teacher) {
+      this.setData({ error: '请先选择班级和教师' });
+      return;
+    }
     const kindergartenName = String(this.data.kindergartenName || '').trim();
     const session = {
       classId: cls.id,
@@ -83,10 +78,8 @@ Page({
       teacherName: teacher.name,
       kindergartenName,
     };
-    wx.setStorageSync('session', session);
+    writeSession(session);
     wx.setStorageSync('kindergartenName', kindergartenName);
-    wx.setStorageSync('privacyAgreed', true);
-    getApp().globalData.session = session;
     wx.switchTab({ url: '/pages/feed/feed' });
   },
 });

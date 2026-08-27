@@ -1,4 +1,5 @@
 const { request, mediaUrl } = require('../../utils/api');
+const { ensureSession } = require('../../utils/session');
 
 function dateLabel(iso) {
   const key = iso.slice(0, 10);
@@ -9,18 +10,22 @@ function dateLabel(iso) {
 Page({
   data: { q: '', loading: true, groups: [], kindergartenName: '', kgHint: '' },
   onShow() {
-    const session = wx.getStorageSync('session');
-    if (!session) {
-      wx.redirectTo({ url: '/pages/login/login' });
-      return;
-    }
-    this.session = session;
-    const kindergartenName = session.kindergartenName || wx.getStorageSync('kindergartenName') || '';
-    this.setData({
-      kindergartenName,
-      kgHint: kindergartenName ? kindergartenName : '未填写园所名称，报告封面只写「幼儿园」',
-    });
-    this.load();
+    ensureSession()
+      .then((session) => {
+        this.session = session;
+        const kindergartenName = session.kindergartenName || wx.getStorageSync('kindergartenName') || '';
+        this.setData({
+          kindergartenName,
+          kgHint: kindergartenName
+            ? `${session.className} · ${session.teacherName} · ${kindergartenName}`
+            : `${session.className} · ${session.teacherName}`,
+        });
+        this.load();
+      })
+      .catch((e) => this.setData({ loading: false, groups: [], kgHint: e.message || '加载失败' }));
+  },
+  goSwitch() {
+    wx.navigateTo({ url: '/pages/login/login' });
   },
   onSearch(e) {
     this.setData({ q: e.detail.value });
@@ -53,7 +58,7 @@ Page({
         const excerpt = (obs.narrative || obs.voice_transcript || '').replace(/\s+/g, ' ');
         const g = (obs.guideHits || [])[0];
         const stage = (obs.stages || [])[0];
-        const media = (obs.media || []).find((m) => m.kind === 'photo' || m.kind === 'video');
+        const media = (obs.media || []).find((m) => m.kind === 'photo');
         return {
           ...obs,
           childNames,

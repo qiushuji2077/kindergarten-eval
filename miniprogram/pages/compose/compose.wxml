@@ -11,7 +11,7 @@
     maxlength="2000"
   />
   <view class="tools">
-    <button class="tool" hover-class="none" bindtap="chooseShot">照片/视频</button>
+    <button class="tool" hover-class="none" bindtap="chooseShot">照片</button>
     <button
       class="tool {{listening ? 'on' : ''}}"
       hover-class="none"
@@ -26,8 +26,7 @@
   <view class="preview" wx:if="{{files.length}}">
     <view class="thumb-wrap" wx:for="{{files}}" wx:key="id">
       <image wx:if="{{item.kind === 'photo'}}" src="{{item.path}}" mode="aspectFill" />
-      <view wx:elif="{{item.kind === 'audio'}}" class="audio-tile">声</view>
-      <video wx:else src="{{item.path}}" object-fit="cover" controls="{{false}}" show-center-play-btn="{{false}}" />
+      <view wx:else class="audio-tile">声</view>
       <view class="x" catchtap="removeFile" data-id="{{item.id}}">×</view>
     </view>
   </view>

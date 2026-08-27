@@ -2,7 +2,7 @@
   <view class="title-row">
     <view>
       <view class="title">观察</view>
-      <view class="kg-label">{{kgHint}}</view>
+      <view class="kg-label" bindtap="goSwitch">{{kgHint}} · 切换</view>
     </view>
     <view class="plus" bindtap="goCompose">+</view>
   </view>
