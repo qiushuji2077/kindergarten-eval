@@ -114,7 +114,7 @@ function stageParas(obs) {
       ? g.keywords
       : String(g.keywordText || '').split('、').filter(Boolean);
     if (keys.length) parts.push(wPara(`（捕捉字段：${keys.join('、')}）`, { after: 40 }));
-    if (g.reason) parts.push(wPara(`（${g.source === 'ai' ? 'AI 对应' : '对应'}：${g.reason}）`, { after: 40 }));
+    if (g.reason) parts.push(wPara(g.reason, { after: 40 }));
     if (g.coa) {
       parts.push(wPara(`${g.coa.domain || ''}  ${g.coa.indicator || ''}`, { after: 20 }));
       parts.push(wPara(`阶段${g.coa.level || ''}：对应《指南》上述典型表现。`, { after: 80 }));
@@ -258,7 +258,7 @@ async function writeChildReport({ kindergartenName, childName, className, observ
     wPara(`本报告共包含记录${rows.length}篇。`, { size: 28, after: 80 }),
   ];
   if (aiSummary) {
-    cover.push(wPara('AI 发展综述（供教研参考，不替代教师判断）', { size: 28, after: 40, bold: true }));
+    cover.push(wPara('发展综述', { size: 28, after: 40, bold: true }));
     cover.push(wPara(aiSummary, { size: 28, after: 200 }));
   } else {
     cover[cover.length - 1] = wPara(`本报告共包含记录${rows.length}篇。`, { size: 28, after: 200 });

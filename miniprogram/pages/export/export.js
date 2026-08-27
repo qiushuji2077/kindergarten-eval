@@ -3,12 +3,20 @@ const { ensureSession } = require('../../utils/session');
 
 const OPEN_HINT = '点幼儿姓名后会打开文件。打开后点右上角 ···，发给「文件传输助手」或存到手机。';
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 Page({
   data: {
     list: [],
     error: '',
     kindergartenName: '',
     hint: OPEN_HINT,
+    busy: false,
+    phase: '',
+    busyTitle: '',
+    busySub: '',
   },
   onShow() {
     ensureSession()
@@ -31,10 +39,25 @@ Page({
     wx.setStorageSync('kindergartenName', kindergartenName);
     getApp().globalData.session = session;
   },
+  setPhase(phase, extra) {
+    const copy = {
+      collect: ['正在整理观察', '先把这个孩子的记录收齐'],
+      summarize: ['正在写发展综述', '根据观察实录生成一段话'],
+      aiDone: ['发展综述已写好', '接下来生成 Word'],
+      write: ['正在生成 Word', extra && extra.usedAi ? '综述写好了，正在装进文件' : '把观察记录汇总成文档'],
+    };
+    const pair = copy[phase] || copy.write;
+    this.setData({
+      busy: true,
+      phase,
+      busyTitle: pair[0],
+      busySub: pair[1],
+    });
+  },
   openReport(filePath, name) {
     wx.openDocument({
       filePath,
-          fileType: 'docx',
+      fileType: 'docx',
       showMenu: true,
       success: () => {
         wx.showToast({
@@ -59,23 +82,34 @@ Page({
     });
   },
   exportChild(e) {
+    if (this.data.busy) return;
     const { id, name } = e.currentTarget.dataset;
-    wx.showLoading({ title: '生成中' });
-    downloadReport(id, name)
-      .then((filePath) => {
-        wx.hideLoading();
-        this.setData({ error: '' });
-        wx.showModal({
-          title: '请打开文件',
-          content: OPEN_HINT,
-          confirmText: '打开文件',
-          showCancel: false,
-          success: () => this.openReport(filePath, name),
-        });
+    this.exporting = true;
+    this.setPhase('collect');
+    downloadReport(id, name, (phase, extra) => {
+      if (!this.exporting) return;
+      this.setPhase(phase, extra);
+    })
+      .then(async (res) => {
+        const filePath = res && res.filePath ? res.filePath : res;
+        const usedAi = !!(res && res.usedAi);
+        if (usedAi && this.data.phase !== 'aiDone') {
+          this.setPhase('aiDone', { usedAi: true });
+          await wait(1200);
+        } else if (usedAi) {
+          await wait(900);
+        }
+        this.exporting = false;
+        this.setData({ busy: false, phase: '', error: '' });
+        this.openReport(filePath, name);
       })
       .catch((err) => {
-        wx.hideLoading();
-        this.setData({ error: (err && err.message) || '导出失败' });
+        this.exporting = false;
+        this.setData({
+          busy: false,
+          phase: '',
+          error: (err && err.message) || '导出失败',
+        });
       });
   },
   logout() {

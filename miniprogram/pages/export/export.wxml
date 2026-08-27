@@ -1,7 +1,6 @@
 <view class="page">
   <view class="title">导出</view>
   <view class="lead">{{hint}}</view>
-  <view class="lead">导出时会写入 AI 发展综述，供教研参考。</view>
   <view class="section">园所名称（写入报告封面）</view>
   <input class="search" placeholder="可不填。不填则封面只写「幼儿园」" value="{{kindergartenName}}" bindinput="onKgName" />
   <view class="section">按幼儿导出</view>
@@ -16,4 +15,18 @@
   </view>
   <view class="btn" style="background:#e5e5ea;color:#000;font-weight:500" bindtap="logout">切换教师</view>
   <view class="error" wx:if="{{error}}">{{error}}</view>
+
+  <view class="export-mask" wx:if="{{busy}}">
+    <view class="export-card">
+      <view class="write {{phase === 'aiDone' ? 'done' : ''}} {{phase === 'summarize' || phase === 'aiDone' ? 'run' : ''}}">
+        <view class="write-line l1"></view>
+        <view class="write-line l2"></view>
+        <view class="write-line l3"></view>
+        <view class="write-nib" wx:if="{{phase !== 'aiDone'}}"></view>
+        <view class="write-ok" wx:else>✓</view>
+      </view>
+      <view class="export-title">{{busyTitle}}</view>
+      <view class="export-sub">{{busySub}}</view>
+    </view>
+  </view>
 </view>

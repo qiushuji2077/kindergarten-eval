@@ -217,10 +217,19 @@ function mediaUrl(filename) {
   return filename;
 }
 
-function downloadReport(childId, name) {
+function usedAiInObservations(list) {
+  return (list || []).some((o) =>
+    String(o.interpret || '').trim() || (o.guideHits || []).some((h) => h.source === 'ai'),
+  );
+}
+
+function downloadReport(childId, name, onPhase) {
   const session = wx.getStorageSync('session') || {};
   const kindergartenName = String(session.kindergartenName || '').trim() || '幼儿园';
   const { writeChildReport } = require('./makeReport');
+  const notify = (phase, extra) => {
+    if (typeof onPhase === 'function') onPhase(phase, extra || {});
+  };
   const q = [
     `childId=${encodeURIComponent(childId)}`,
     session.classId ? `classId=${encodeURIComponent(session.classId)}` : '',
@@ -228,6 +237,7 @@ function downloadReport(childId, name) {
   ]
     .filter(Boolean)
     .join('&');
+  notify('collect');
   return request(`/api/observations?${q}`).then((rows) => {
     const list = rows || [];
     if (!list.length) return Promise.reject(new Error('还没有可导出的观察。先去记一条。'));
@@ -236,21 +246,25 @@ function downloadReport(childId, name) {
       at: o.observed_at,
       text: (o.narrative || o.voice_transcript || '').slice(0, 160),
     }));
+    notify('summarize');
     return request('/api/guide/summarize', 'POST', {
       childName: name,
       className,
       observations: excerpts,
     })
       .catch(() => ({ interpret: '' }))
-      .then((ai) =>
-        writeChildReport({
+      .then((ai) => {
+        const summary = String((ai && ai.interpret) || '').trim();
+        const usedAi = !!summary || usedAiInObservations(list);
+        notify(usedAi ? 'aiDone' : 'write', { usedAi, summary });
+        return writeChildReport({
           kindergartenName,
           childName: name,
           className,
           observations: list,
-          aiSummary: (ai && ai.interpret) || '',
-        }),
-      );
+          aiSummary: summary,
+        }).then((filePath) => ({ filePath, usedAi, summary }));
+      });
   });
 }
 
