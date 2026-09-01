@@ -26,7 +26,7 @@ type AppState = {
   session: Session | null;
   setSession: (s: Session) => void;
   clearSession: () => void;
-  refresh: () => Promise<void>;
+  refresh: () => Promise<{ c: ClassItem[]; t: Teacher[] }>;
 };
 
 const Ctx = createContext<AppState | null>(null);
