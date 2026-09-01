@@ -14,7 +14,7 @@
   <view class="group">
     <view class="cell">
       <text class="name">姓名</text>
-      <input placeholder="小麦" value="{{name}}" bindinput="onName" style="text-align:right" />
+      <input placeholder="小童" value="{{name}}" bindinput="onName" style="text-align:right" />
     </view>
   </view>
   <view class="btn" bindtap="add">添加到本班</view>

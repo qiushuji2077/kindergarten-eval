@@ -28,10 +28,23 @@ function withId(doc) {
   return { ...doc, id: doc.id || doc._id };
 }
 
+async function renameDemoChild() {
+  try {
+    await db.collection(COL.children).doc('c-xiaomai').update({
+      data: { name: '小童' },
+    });
+  } catch {
+    // 库里还没有这条时忽略
+  }
+}
+
 async function ensureSeed() {
   try {
     const count = await db.collection(COL.classes).count();
-    if (count.total > 0) return;
+    if (count.total > 0) {
+      await renameDemoChild();
+      return;
+    }
   } catch {
     // collection 尚未创建时继续写入
   }
@@ -50,7 +63,7 @@ async function ensureSeed() {
     });
   }
   const kids = [
-    ['c-xiaomai', '小麦', '女', '2021-05-12'],
+    ['c-xiaomai', '小童', '女', '2021-05-12'],
     ['c-tangguo', '小糖果', '女', '2021-08-03'],
     ['c-xixi', '熙熙', '男', '2021-03-21'],
     ['c-zhou', '周彦静', '女', '2021-11-09'],

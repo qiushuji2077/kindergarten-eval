@@ -16,7 +16,7 @@ function seed() {
       { id: 't-wang', name: '王老师', phone: '13800000003', class_id: classId },
     ],
     children: [
-      { id: 'c-xiaomai', name: '小麦', class_id: classId, class_name: '中二班', gender: '女', birthday: '2021-05-12' },
+      { id: 'c-xiaomai', name: '小童', class_id: classId, class_name: '中二班', gender: '女', birthday: '2021-05-12' },
       { id: 'c-tangguo', name: '小糖果', class_id: classId, class_name: '中二班', gender: '女', birthday: '2021-08-03' },
       { id: 'c-xixi', name: '熙熙', class_id: classId, class_name: '中二班', gender: '男', birthday: '2021-03-21' },
       { id: 'c-zhou', name: '周彦静', class_id: classId, class_name: '中二班', gender: '女', birthday: '2021-11-09' },
@@ -33,9 +33,33 @@ function seed() {
   };
 }
 
+function migrate(db) {
+  let changed = false;
+  for (const c of db.children || []) {
+    if (c.name === '小麦') {
+      c.name = '小童';
+      changed = true;
+    }
+  }
+  for (const o of db.observations || []) {
+    if (o.narrative && o.narrative.includes('小麦')) {
+      o.narrative = o.narrative.replaceAll('小麦', '小童');
+      changed = true;
+    }
+    for (const ch of o.children || []) {
+      if (ch.name === '小麦') {
+        ch.name = '小童';
+        changed = true;
+      }
+    }
+  }
+  if (changed) save(db);
+  return db;
+}
+
 function load() {
   const cached = wx.getStorageSync(KEY);
-  if (cached && cached.classes) return cached;
+  if (cached && cached.classes) return migrate(cached);
   const db = seed();
   wx.setStorageSync(KEY, db);
   return db;

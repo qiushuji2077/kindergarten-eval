@@ -8,32 +8,39 @@ import { AdminPage } from './pages/AdminPage';
 
 function IconList() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M8 7h11M8 12h11M8 17h11" />
-      <circle cx="5" cy="7" r="0.8" fill="currentColor" />
-      <circle cx="5" cy="12" r="0.8" fill="currentColor" />
-      <circle cx="5" cy="17" r="0.8" fill="currentColor" />
+    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" fill="currentColor" aria-hidden>
+      <rect x="1" y="2" width="2" height="2" />
+      <rect x="5" y="2" width="10" height="2" />
+      <rect x="1" y="7" width="2" height="2" />
+      <rect x="5" y="7" width="10" height="2" />
+      <rect x="1" y="12" width="2" height="2" />
+      <rect x="5" y="12" width="10" height="2" />
     </svg>
   );
 }
 
 function IconPeople() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="9" cy="8" r="3" />
-      <path d="M4 19c.6-3 2.6-4.5 5-4.5S13.4 16 14 19" />
-      <circle cx="16.5" cy="9" r="2.2" />
-      <path d="M16 14.6c2.2.3 3.8 1.6 4.3 4.4" />
+    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" fill="currentColor" aria-hidden>
+      <rect x="4" y="1" width="4" height="4" />
+      <rect x="3" y="6" width="6" height="2" />
+      <rect x="2" y="8" width="8" height="7" />
+      <rect x="11" y="3" width="3" height="3" />
+      <rect x="10" y="7" width="5" height="6" />
     </svg>
   );
 }
 
 function IconExport() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M14 3h6v6" />
-      <path d="M20 3l-9 9" />
-      <path d="M19 14v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" />
+    <svg viewBox="0 0 16 16" shapeRendering="crispEdges" fill="currentColor" aria-hidden>
+      <rect x="2" y="5" width="9" height="10" />
+      <rect x="4" y="7" width="5" height="2" />
+      <rect x="4" y="10" width="5" height="2" />
+      <rect x="10" y="1" width="5" height="2" />
+      <rect x="13" y="1" width="2" height="5" />
+      <rect x="8" y="4" width="2" height="2" />
+      <rect x="10" y="2" width="2" height="2" />
     </svg>
   );
 }

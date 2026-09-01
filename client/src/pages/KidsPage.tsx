@@ -63,7 +63,7 @@ export function KidsPage() {
               className="field-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="小麦"
+              placeholder="小童"
               required
             />
           </label>

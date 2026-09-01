@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, type GuideHit } from '../api';
+import { canUseLiveCamera, canUseLiveVideo } from '../camera';
+import { CameraSheet } from '../components/CameraSheet';
 import { useApp } from '../state';
 
 type LocalMedia = {
@@ -27,6 +29,8 @@ export function ComposePage() {
   const navigate = useNavigate();
   const photoRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
+  const albumRef = useRef<HTMLInputElement>(null);
+  const [cam, setCam] = useState<null | 'photo' | 'video'>(null);
   const [childIds, setChildIds] = useState<string[]>([]);
   const [narrative, setNarrative] = useState('');
   const [voiceTranscript, setVoiceTranscript] = useState('');
@@ -182,6 +186,21 @@ export function ComposePage() {
     setListening(true);
   };
 
+  const openCapture = (mode: 'photo' | 'video') => {
+    const live = mode === 'video' ? canUseLiveVideo() : canUseLiveCamera();
+    if (live) {
+      setCam(mode);
+      return;
+    }
+    (mode === 'photo' ? photoRef : videoRef).current?.click();
+  };
+
+  const addOneFile = (file: File, kind?: LocalMedia['kind']) => {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    addFiles(dt.files, kind);
+  };
+
   const canPost =
     childIds.length > 0 &&
     (narrative.trim() || voiceTranscript.trim() || media.length > 0) &&
@@ -234,12 +253,15 @@ export function ComposePage() {
           onChange={(e) => setNarrative(e.target.value)}
         />
 
-        <div className="tool-row">
-          <button type="button" className="tool" onClick={() => photoRef.current?.click()}>
+        <div className="tool-row five">
+          <button type="button" className="tool" onClick={() => openCapture('photo')}>
             拍照
           </button>
-          <button type="button" className="tool" onClick={() => videoRef.current?.click()}>
-            视频
+          <button type="button" className="tool" onClick={() => openCapture('video')}>
+            录像
+          </button>
+          <button type="button" className="tool" onClick={() => albumRef.current?.click()}>
+            相册
           </button>
           <button
             type="button"
@@ -255,6 +277,11 @@ export function ComposePage() {
         {(recording || listening) && (
           <div className="recording">{recording ? '正在录音' : '正在转成文字'}</div>
         )}
+        <p className="hint cam-note">
+          {canUseLiveCamera()
+            ? '拍照用本机镜头。录像在 iPhone 上会打开系统相机。微信里只能走系统相机，调不了小程序拍摄接口。'
+            : '当前在微信里或未用 https，拍照录像会打开系统相机，不是小程序接口。'}
+        </p>
 
         <input
           ref={photoRef}
@@ -275,6 +302,17 @@ export function ComposePage() {
           capture="environment"
           onChange={(e) => {
             addFiles(e.target.files, 'video');
+            e.target.value = '';
+          }}
+        />
+        <input
+          ref={albumRef}
+          className="hidden-file"
+          type="file"
+          accept="image/*,video/*"
+          multiple
+          onChange={(e) => {
+            addFiles(e.target.files);
             e.target.value = '';
           }}
         />
@@ -384,6 +422,18 @@ export function ComposePage() {
 
         {error && <div className="error-banner">{error}</div>}
       </form>
+      {cam && (
+        <CameraSheet
+          mode={cam}
+          onFile={(file) => addOneFile(file, cam === 'video' ? 'video' : 'photo')}
+          onClose={() => setCam(null)}
+          onFallback={() => {
+            const mode = cam;
+            setCam(null);
+            window.setTimeout(() => (mode === 'photo' ? photoRef : videoRef).current?.click(), 50);
+          }}
+        />
+      )}
     </div>
   );
 }

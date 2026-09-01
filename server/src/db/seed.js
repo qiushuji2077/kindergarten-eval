@@ -182,7 +182,7 @@ function seedDemo() {
   const insertChild = db.prepare(
     'INSERT INTO children (id, name, class_id, gender, birthday) VALUES (?, ?, ?, ?, ?)',
   );
-  insertChild.run(childIds[0], '小麦', classId, '女', '2021-05-12');
+  insertChild.run(childIds[0], '小童', classId, '女', '2021-05-12');
   insertChild.run(childIds[1], '小糖果', classId, '女', '2021-08-03');
   insertChild.run(childIds[2], '熙熙', classId, '男', '2021-03-21');
   insertChild.run(childIds[3], '周彦静', classId, '女', '2021-11-09');
@@ -216,6 +216,20 @@ function ensureChildren() {
   }
 }
 
+function renameXiaomaiToXiaotong() {
+  db.prepare("UPDATE children SET name = '小童' WHERE name = '小麦'").run();
+  db.prepare(
+    "UPDATE observations SET narrative = REPLACE(narrative, '小麦', '小童') WHERE narrative LIKE '%小麦%'",
+  ).run();
+  try {
+    db.prepare(
+      "UPDATE observations SET voice_transcript = REPLACE(voice_transcript, '小麦', '小童') WHERE voice_transcript LIKE '%小麦%'",
+    ).run();
+  } catch {
+    // column may be empty
+  }
+}
+
 function patchRhythmStage1() {
   db.prepare(
     `UPDATE stages SET description = ?, key_point = ?
@@ -233,6 +247,7 @@ function patchRhythmStage1() {
 seedFramework();
 seedDemo();
 ensureChildren();
+renameXiaomaiToXiaotong();
 patchRhythmStage1();
 seedRecords();
 backfillGuideHits();

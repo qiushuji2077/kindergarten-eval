@@ -1,3 +1,5 @@
+import { probeLiveApi, staticApi } from './staticApi';
+
 export type ClassItem = {
   id: string;
   name: string;
@@ -93,56 +95,74 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return res.json();
 }
 
+async function live() {
+  return probeLiveApi();
+}
+
 export const api = {
-  classes: () => request<ClassItem[]>('/api/classes'),
-  teachers: (classId?: string) =>
-    request<Teacher[]>(`/api/teachers${classId ? `?classId=${classId}` : ''}`),
-  children: (classId?: string) =>
-    request<Child[]>(`/api/children${classId ? `?classId=${classId}` : ''}`),
-  framework: () => request<Domain[]>('/api/framework'),
-  observations: (params: { classId?: string; childId?: string } = {}) => {
+  classes: async () =>
+    (await live()) ? request<ClassItem[]>('/api/classes') : staticApi.classes(),
+  teachers: async (classId?: string) =>
+    (await live())
+      ? request<Teacher[]>(`/api/teachers${classId ? `?classId=${classId}` : ''}`)
+      : staticApi.teachers(classId),
+  children: async (classId?: string) =>
+    (await live())
+      ? request<Child[]>(`/api/children${classId ? `?classId=${classId}` : ''}`)
+      : staticApi.children(classId),
+  framework: async () =>
+    (await live()) ? request<Domain[]>('/api/framework') : staticApi.framework(),
+  observations: async (params: { classId?: string; childId?: string } = {}) => {
+    if (!(await live())) return staticApi.observations(params);
     const q = new URLSearchParams();
     if (params.classId) q.set('classId', params.classId);
     if (params.childId) q.set('childId', params.childId);
     q.set('limit', '80');
-    const s = q.toString();
-    return request<Observation[]>(`/api/observations?${s}`);
+    return request<Observation[]>(`/api/observations?${q}`);
   },
-  createChild: (body: { name: string; classId: string; gender?: string; birthday?: string }) =>
-    request<Child>('/api/children', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }),
-  createClass: (name: string) =>
-    request<ClassItem>('/api/classes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    }),
-  createTeacher: (body: { name: string; phone?: string; classId?: string }) =>
-    request<Teacher>('/api/teachers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }),
-  createObservation: (form: FormData) =>
-    request<Observation>('/api/observations', { method: 'POST', body: form }),
-  matchGuide: (body: { text: string; classId?: string; childIds?: string[]; observedAt?: string }) =>
-    request<{ ageBand: string; hits: GuideHit[] }>('/api/guide/match', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    }),
-  reportUrl: (childId: string, opts: { from?: string; to?: string; kindergartenName?: string } = {}) => {
-    const q = new URLSearchParams();
-    if (opts.from) q.set('from', opts.from);
-    if (opts.to) q.set('to', opts.to);
-    if (opts.kindergartenName) q.set('kindergartenName', opts.kindergartenName);
-    const s = q.toString();
-    return `/api/reports/child/${encodeURIComponent(childId)}/docx${s ? `?${s}` : ''}`;
-  },
-  previewReport: (childId: string, opts: { from?: string; to?: string } = {}) => {
+  createChild: async (body: { name: string; classId: string; gender?: string; birthday?: string }) =>
+    (await live())
+      ? request<Child>('/api/children', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+      : staticApi.createChild(body),
+  createClass: async (name: string) =>
+    (await live())
+      ? request<ClassItem>('/api/classes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        })
+      : staticApi.createClass(),
+  createTeacher: async (body: { name: string; phone?: string; classId?: string }) =>
+    (await live())
+      ? request<Teacher>('/api/teachers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+      : staticApi.createTeacher(),
+  createObservation: async (form: FormData) =>
+    (await live())
+      ? request<Observation>('/api/observations', { method: 'POST', body: form })
+      : staticApi.createObservation(form),
+  matchGuide: async (body: {
+    text: string;
+    classId?: string;
+    childIds?: string[];
+    observedAt?: string;
+  }) =>
+    (await live())
+      ? request<{ ageBand: string; hits: GuideHit[] }>('/api/guide/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        })
+      : staticApi.matchGuide(body),
+  previewReport: async (childId: string, opts: { from?: string; to?: string } = {}) => {
+    if (!(await live())) return staticApi.previewReport(childId);
     const q = new URLSearchParams();
     if (opts.from) q.set('from', opts.from);
     if (opts.to) q.set('to', opts.to);
@@ -150,5 +170,21 @@ export const api = {
     return request<{ meta: { total: number; coaCount: number; from: string; to: string } }>(
       `/api/reports/child/${childId}/preview${s ? `?${s}` : ''}`,
     );
+  },
+  downloadReport: async (childId: string, childName: string, kindergartenName: string) => {
+    if (!(await live())) {
+      return staticApi.downloadReport(childId, childName, kindergartenName);
+    }
+    const q = new URLSearchParams();
+    if (kindergartenName) q.set('kindergartenName', kindergartenName);
+    const s = q.toString();
+    const res = await fetch(
+      `/api/reports/child/${encodeURIComponent(childId)}/docx${s ? `?${s}` : ''}`,
+    );
+    if (!res.ok) throw new Error('生成失败');
+    const blob = await res.blob();
+    return new File([blob], `${childName}-观察记录汇总.docx`, {
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    });
   },
 };

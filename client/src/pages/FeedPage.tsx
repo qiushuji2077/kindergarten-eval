@@ -40,6 +40,7 @@ export function FeedPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
+  const [open, setOpen] = useState<Observation | null>(null);
 
   useEffect(() => {
     if (!session) return;
@@ -81,7 +82,8 @@ export function FeedPage() {
           </Link>
         </div>
         <p className="lead" style={{ margin: '0 16px 8px' }}>
-          {session?.kindergartenName || '未填写园所名称，报告封面只写「幼儿园」'}
+          {session?.className} · {session?.teacherName}
+          {session?.kindergartenName ? ` · ${session.kindergartenName}` : ''}
         </p>
         <input
           className="ios-search"
@@ -105,7 +107,7 @@ export function FeedPage() {
               const thumb = thumbOf(obs);
               const stage = obs.stages[0];
               return (
-                <article className="row" key={obs.id}>
+                <button type="button" className="row" key={obs.id} onClick={() => setOpen(obs)}>
                   <div className="row-body">
                     <p className="row-title">{childNames(obs)}</p>
                     <p className="row-excerpt">{excerpt(obs) || '无文字实录'}</p>
@@ -120,19 +122,46 @@ export function FeedPage() {
                   </div>
                   {thumb ? (
                     thumb.kind === 'video' ? (
-                      <video className="thumb" src={thumb.url} muted playsInline preload="metadata" />
+                      <div className="thumb-wrap">
+                        <video className="thumb" src={thumb.url} muted playsInline preload="metadata" />
+                        <span className="play-dot">▶</span>
+                      </div>
                     ) : (
                       <img className="thumb" src={thumb.url} alt="" />
                     )
                   ) : (
                     <div className="thumb-fallback">无图</div>
                   )}
-                </article>
+                </button>
               );
             })}
           </div>
         </section>
       ))}
+
+      {open && (
+        <div className="sheet-mask" onClick={() => setOpen(null)}>
+          <div className="sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet-bar">
+              <span>{childNames(open)}</span>
+              <button type="button" className="link" onClick={() => setOpen(null)}>
+                关闭
+              </button>
+            </div>
+            <p className="sheet-meta">
+              {open.teacher_name} · {open.observed_at.replace('T', ' ').slice(0, 16)}
+            </p>
+            <p className="sheet-text">{excerpt(open) || '无文字实录'}</p>
+            {open.media.map((m) => (
+              <div className="sheet-media" key={m.id}>
+                {m.kind === 'photo' && <img src={m.url} alt="" />}
+                {m.kind === 'video' && <video src={m.url} controls playsInline />}
+                {m.kind === 'audio' && <audio src={m.url} controls />}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
