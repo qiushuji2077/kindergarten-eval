@@ -1,14 +1,7 @@
 <view class="page">
-  <view class="title">怎么用</view>
-  <view class="legal">
-    <view class="h">给评委 / 体验者</view>
-    <view>1. 登录页选「中二班」和「杨飞」，同意隐私后进入。</view>
-    <view>2. 点右上角 +，点选「小麦」，写一句实录，例如「积木倒了，他说我们一起修好」。</view>
-    <view>3. 稍等即可看到《指南》对应和发展解读；也可拍照或按住说话。</view>
-    <view>4. 发表后回到记录流。点「导出」打开小麦的 Word。</view>
-    <view class="h">日常使用</view>
-    <view>观察时间跟手机时钟走，发表后不能改时间，可以补文字和照片。园所名称写在登录页或导出页，不填则封面只写「幼儿园」。</view>
-    <view class="h">数据说明</view>
-    <view>当前中二班名单是演示数据。正式带班请在「幼儿」里改成自己班的名字。</view>
-  </view>
+  <view class="eyebrow">关于这本手记</view><view class="title">看见，先于判断。</view><view class="subtitle">班里手记，是教师的一本日常观察手记。让技术承担整理，让教师从容理解儿童。</view>
+  <view class="rule"></view><view class="section-title">三件一直坚持的事</view><view class="about-item"><view>保留原话</view><view class="small">实录属于教师。修改时保留首版原文，辅助线索不会改写它。</view></view><view class="about-item"><view>看见证据</view><view class="small">辅助结果要能回到具体文字；不确定时，继续观察。</view></view><view class="about-item"><view>教师确认</view><view class="small">采纳、调整或仅留实录，由你决定。没有评分与排名。</view></view>
+  <view class="notice space">本版观察提示为项目自行整理，参考《3—6岁儿童学习与发展指南》的领域划分；未将提示改写文本冒充官方原文，未使用商业发展量表评分。</view>
+  <button class="quiet space" bindtap="legal" data-type="privacy">隐私与儿童信息保护</button><button class="quiet" bindtap="legal" data-type="terms">使用说明与功能边界</button><button class="secondary space" bindtap="logout">退出并清除本机副本</button>
+  <view class="version">开发评审版 {{version}}</view><view class="small">{{session.mode === 'formal' ? '当前使用真实班级授权' : '当前使用虚构示例'}}</view>
 </view>

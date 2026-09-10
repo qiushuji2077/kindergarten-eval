@@ -1,4 +1,1 @@
-@import '../../styles/common.wxss';
-.title-row { padding-right: 8rpx; }
-.kg-label { color: #8e8e93; font-size: 24rpx; padding: 0 32rpx 8rpx; }
-.row { position: relative; }
+.search{background:#EDF1E8;border-radius:12rpx;padding:18rpx 24rpx;font-size:28rpx}.tabs{display:flex;gap:28rpx;border-bottom:1rpx solid #D8E0D2;margin:24rpx 0 8rpx}.tabs button{background:transparent;font-size:26rpx;min-height:88rpx;padding:20rpx 0;color:#6D7A6D;border-radius:0}.tabs .active{color:#244D3F;border-bottom:4rpx solid #244D3F;font-weight:600}.day-label{font-family:Georgia,serif;font-size:26rpx;letter-spacing:2rpx;color:#6D8069;margin:30rpx 0 18rpx}.entry{padding:26rpx 26rpx 30rpx;background:#FDFDF9;border:1rpx solid #E0E6DA;border-left:4rpx solid #98AA8E;border-radius:0 12rpx 12rpx 0;margin-bottom:18rpx}.entry-child{font-size:30rpx;font-weight:600}.entry-copy{font-size:30rpx;line-height:1.9;color:#344D3D;margin:18rpx 0;white-space:pre-wrap}.entry-pressed{background:#EFF3E9}

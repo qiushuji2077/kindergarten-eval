@@ -1,22 +1,11 @@
 <view class="page">
-  <view class="title">幼儿</view>
-  <view class="lead">演示班名单可改。正式带班请改成自己班的名字。</view>
-  <view class="section">{{className}} · {{list.length}}人</view>
-  <view class="group">
-    <view class="cell" wx:for="{{list}}" wx:key="id">
-      <view>
-        <view class="name">{{item.name}}</view>
-        <view class="sub">{{item.gender}} {{item.birthday}}</view>
-      </view>
-    </view>
-  </view>
-  <view class="section">添加幼儿</view>
-  <view class="group">
-    <view class="cell">
-      <text class="name">姓名</text>
-      <input placeholder="小麦" value="{{name}}" bindinput="onName" style="text-align:right" />
-    </view>
-  </view>
-  <view class="btn" bindtap="add">添加到本班</view>
-  <view class="error" wx:if="{{error}}">{{error}}</view>
+  <view class="eyebrow">{{session.className}}</view><view class="title">每个孩子，都值得看见。</view><view class="subtitle">这里只管理观察对象，记录数量不用于比较与排名。</view>
+  <view wx:if="{{session.mode === 'demo'}}" class="notice demo-notice space">以下为示例名单。体验时请使用虚构昵称。</view>
+  <view class="roster space"><view wx:for="{{list}}" wx:key="id" class="child-row"><view class="row"><view class="child-name">{{item.name}}</view><text class="pill">{{item.ageBand}}</text></view><view wx:if="{{session.mode === 'formal'}}" class="small">观察已授权 · AI{{item.allowAI ? '可用' : '未授权'}} · 附件{{item.allowMedia ? '可用' : '未授权'}}</view></view></view>
+  <view wx:if="{{!list.length}}" class="empty">名单还没有准备好。<text>
+</text>先完成授权，再开始真实观察。</view>
+  <view wx:if="{{session.canManageChildren}}" class="sheet space"><view class="section-title">添加观察对象</view><view wx:if="{{session.mode === 'demo'}}"><view class="label">虚构昵称</view><input class="field" value="{{name}}" bindinput="name" maxlength="20" placeholder="例如：小芽（示例）"/></view><view wx:else=""><view class="small">真实儿童的姓名从已登记的监护人授权记录读取，无需重复填写。</view><view class="label">授权记录编号</view><input class="field" value="{{consentId}}" bindinput="consent" maxlength="100" placeholder="由园所负责人提供"/></view><view class="label">观察时的年龄段</view><picker mode="selector" range="{{ageBands}}" value="{{ageIndex}}" bindchange="age"><view class="field">{{ageBands[ageIndex]}}</view></picker><button class="secondary space" bindtap="add" loading="{{busy}}" disabled="{{busy}}">添加到本班</button></view>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <view class="footer-note">不采集身份证、家庭住址或完整生日。<text>
+</text>年龄段用于理解背景，不能作为发展好坏的标尺。</view>
 </view>

@@ -1,1 +1,1 @@
-@import '../../styles/common.wxss';
+.child-row{padding:26rpx 0;border-bottom:1rpx solid #DBE3D4}.child-name{font-size:32rpx;font-weight:500}.child-row .small{margin-top:10rpx}.roster{border-top:1rpx solid #DBE3D4}

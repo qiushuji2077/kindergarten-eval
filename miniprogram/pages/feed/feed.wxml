@@ -1,26 +1,18 @@
 <view class="page">
-  <view class="title-row">
-    <view>
-      <view class="title">观察</view>
-      <view class="kg-label">{{kgHint}}</view>
-    </view>
-    <view class="plus" bindtap="goCompose">+</view>
-  </view>
-  <input class="search" placeholder="搜索幼儿姓名" value="{{q}}" bindinput="onSearch" />
-  <view class="lead">点一条记录可回去改文字、补照片。观察时间不能改。带「AI」的条目已由混元对应《指南》。</view>
-  <view class="empty" wx:if="{{loading}}">加载中</view>
-  <view class="empty" wx:elif="{{!groups.length}}">还没有观察记录</view>
-  <block wx:for="{{groups}}" wx:key="key">
-    <view class="section">{{item.label}}</view>
-    <view class="group">
-      <view class="row" wx:for="{{item.items}}" wx:for-item="obs" wx:key="id" data-id="{{obs.id}}" bindtap="openEdit">
-        <view class="row-body">
-          <view class="row-title">{{obs.childNames}}</view>
-          <view class="row-excerpt">{{obs.excerpt}}</view>
-          <view class="row-meta">{{obs.meta}}</view>
-        </view>
-        <image wx:if="{{obs.thumb}}" class="thumb" src="{{obs.thumb}}" mode="aspectFill" />
-      </view>
-    </view>
-  </block>
+  <view class="row"><view class="eyebrow">{{session.className}} · {{session.teacherName}}</view><button class="quiet" bindtap="about">关于</button></view>
+  <view class="title">日常里，有成长。</view>
+  <view class="subtitle">留住今天值得再看一眼的瞬间。</view>
+  <view wx:if="{{session.mode === 'demo'}}" class="notice demo-notice space">当前为示例体验，内置资料均为虚构。请勿录入真实儿童信息。</view>
+  <button class="primary space" bindtap="compose">{{draft ? '继续未完成的手记' : '写一条观察'}}</button>
+  <input class="search space" placeholder="找孩子、原话或一次发现" value="{{q}}" bindinput="search"/>
+  <view class="tabs"><button class="{{filter === 'all' ? 'active' : ''}}" data-value="all" bindtap="filter">全部手记</button><button class="{{filter === 'pending' ? 'active' : ''}}" data-value="pending" bindtap="filter">待回看</button><button class="{{filter === 'confirmed' ? 'active' : ''}}" data-value="confirmed" bindtap="filter">已确认</button></view>
+  <view wx:if="{{error}}" class="error">{{error}}<button class="quiet" bindtap="retry">重新读取</button></view>
+  <view wx:if="{{loading}}" class="small space">正在读取手记…</view>
+  <view wx:if="{{!loading &amp;&amp; !groups.length &amp;&amp; !error}}" class="empty"><view class="empty-title">从一件小事开始。</view><view>孩子说了什么？做了什么？<text>
+</text>先留下看见的，不急着下结论。</view></view>
+  <block wx:for="{{groups}}" wx:key="day"><view class="day-label">{{item.day}}</view><view class="timeline"><view class="entry" wx:for="{{item.items}}" wx:for-item="obs" wx:key="id" data-id="{{obs.id}}" bindtap="open" hover-class="entry-pressed"><view class="row"><view class="entry-child">{{obs.childNames}}</view><text class="pill {{obs.pending ? 'pending' : ''}}">{{obs.status}}</text></view><view class="entry-copy">{{obs.narrative || '这条观察保留了照片或录音。'}}</view><view class="small">{{obs.when}} · {{obs.scene || '日常观察'}}<text wx:if="{{obs.mediaCount}}"> · {{obs.mediaCount}}个附件</text></view></view></view></block>
+  <button wx:if="{{hasMore}}" class="secondary space" bindtap="more" loading="{{loading}}">读取更早的手记</button>
+  <view wx:if="{{withheld}}" class="small space">部分记录因授权状态变化暂不展示。</view>
+  <view class="footer-note">这里记录成长的线索。<text>
+</text>记录多少，与孩子发展好坏无关。</view>
 </view>

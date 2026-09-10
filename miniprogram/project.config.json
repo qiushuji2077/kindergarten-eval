@@ -1,47 +1,10 @@
 {
-  "description": "幼儿观察记录",
+  "description": "班里手记 1.2 评审分支：先在示例环境验证，真实班级默认关闭",
   "appid": "wx8e8daba1d8b01cc5",
-  "projectname": "kindergarten-eval-mp",
+  "projectname": "班里手记",
   "compileType": "miniprogram",
-  "libVersion": "3.15.1",
+  "miniprogramRoot": "./",
   "cloudfunctionRoot": "cloudfunctions/",
-  "packOptions": {
-    "ignore": [
-      {
-        "type": "folder",
-        "value": "cloudfunctions"
-      },
-      {
-        "type": "file",
-        "value": "上线说明.txt"
-      }
-    ],
-    "include": []
-  },
-  "setting": {
-    "es6": true,
-    "postcss": true,
-    "minified": true,
-    "urlCheck": false,
-    "coverView": true,
-    "lazyloadPlaceholderEnable": false,
-    "preloadBackgroundData": false,
-    "autoAudits": false,
-    "bigPackageSizeSupport": true,
-    "minifyWXML": true,
-    "minifyWXSS": true,
-    "useIsolateContext": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    }
-  },
-  "condition": {},
-  "editorSetting": {
-    "tabIndent": "insertSpaces",
-    "tabSize": 2
-  }
+  "setting": {"es6": true,"enhance": true,"postcss": true,"minified": true,"urlCheck": true},
+  "packOptions": {"ignore": [{"type":"folder","value":"cloudfunctions"}]}
 }

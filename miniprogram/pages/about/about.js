@@ -1,1 +1,1 @@
-Page({});
+Page(require('../../utils/banli-pages').about());

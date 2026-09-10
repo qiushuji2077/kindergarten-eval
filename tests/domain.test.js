@@ -1,0 +1,12 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const D=require('../miniprogram/utils/banli-domain');
+test('redaction covers known names, phones, email, full dates and IDs',()=>{const text=D.redact('小禾小禾同学 13812345678 a@b.com 2021-01-12 110105199001010011 https://example.com',['小禾','小禾同学']);for(const value of ['小禾','13812345678','a@b.com','2021-01-12','110105199001010011','https://'])assert.ok(!text.includes(value));});
+test('redaction is deliberately not a promise of anonymization',()=>{assert.ok(D.redact('邻居的孩子在翠微路12号哭了',[]).includes('翠微路12号'));});
+test('rules provide exact text evidence and declare rule provenance',()=>{const text='一起比较树叶的长短';const hits=D.rules(text);assert.ok(hits.length>0);for(const h of hits){assert.equal(h.source,'rule');assert.ok(text.includes(h.evidence));assert.equal(h.level,undefined);}});
+test('model cannot invent source excerpts or unknown categories',()=>{assert.deepEqual(D.sanitizeSuggestions([{id:'peer',evidence:'并没有这句话',reason:'test'},{id:'unknown',evidence:'一起',reason:'test'}],'一起搭桥'),[]);});
+test('clinical and ranking claims fail automatic checks',()=>{for(const reason of ['孩子发育迟缓','智商很高','优于同龄','多动症诊断','达到高级阶段'])assert.deepEqual(D.sanitizeSuggestions([{id:'peer',evidence:'一起',reason}],'一起搭桥'),[]);});
+test('duplicate model suggestions are deduplicated',()=>{const h={id:'peer',evidence:'一起',reason:'共同活动的线索'};assert.equal(D.sanitizeSuggestions([h,h],'一起搭桥').length,1);});
+test('unconfirmed and ignored interpretation never enters report',()=>{for(const decision of ['pending','ignored']){const r=D.forReport({narrative:'事实',suggestions:[{id:'peer'}],review:{decision,ids:['peer'],note:'不可导出的内容',next:'不可导出的内容'}});assert.deepEqual(r.suggestions,[]);assert.equal(r.teacherNote,'');assert.equal(r.nextObservation,'');assert.equal(r.narrative,'事实');}});
+test('accepted report includes only explicitly confirmed IDs',()=>{const r=D.forReport({suggestions:[{id:'peer'},{id:'art'}],review:{decision:'accepted',ids:['peer'],note:'我的理解'}});assert.deepEqual(r.suggestions,[{id:'peer'}]);assert.equal(r.teacherNote,'我的理解');});
+test('dates validate leap days and range order',()=>{assert.doesNotThrow(()=>D.dateRange('2024-02-29','2024-03-01'));assert.throws(()=>D.dateRange('2026-02-29',''));assert.throws(()=>D.dateRange('2026-09-10','2026-09-01'));});
