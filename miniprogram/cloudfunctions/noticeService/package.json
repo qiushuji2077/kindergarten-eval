@@ -1,10 +1,1 @@
-{
-  "name": "evalService",
-  "version": "1.0.0",
-  "main": "index.js",
-  "dependencies": {
-    "docx": "^9.7.1",
-    "qrcode": "^1.5.4",
-    "wx-server-sdk": "~3.0.1"
-  }
-}
+{"name":"banli-notice-service","version":"1.2.0","main":"index.js","private":true,"dependencies":{"wx-server-sdk":"4.0.2"}}
