@@ -16,17 +16,39 @@ function login(){return {
   legal(e){wx.navigateTo({url:'/pages/legal/'+e.currentTarget.dataset.type});}
 };}
 function feed(){return {
-  data:{session:{},groups:[],q:'',filter:'all',loading:true,error:'',hasMore:false,draft:false,withheld:0},
-  onShow(){this.session=A.requireSession();if(!this.session)return;this.setData({session:this.session,draft:!!A.readDraft()});this.load();},
+  data:{session:{},groups:[],kids:[],childOptions:['全部孩子'],childIndex:0,childId:'',from:'',to:'',defaultDay:'',q:'',filter:'all',loading:true,error:'',hasMore:false,draft:false,withheld:0},
+  async onShow(){
+    this.session=A.requireSession();if(!this.session)return;
+    this.setData({session:this.session,draft:!!A.readDraft(),defaultDay:A.localDay()});
+    try{
+      const kids=await A.children();
+      const childOptions=['全部孩子'].concat(kids.map(k=>k.name));
+      const found=this.data.childId?kids.findIndex(k=>k.id===this.data.childId)+1:0;
+      this.setData({kids,childOptions,childIndex:found>0?found:0,childId:found>0?this.data.childId:''});
+    }catch(_){}
+    this.load();
+  },
+  range(){
+    const options={};
+    if(this.data.childId)options.childId=this.data.childId;
+    if(this.data.from)options.from=this.data.from;
+    if(this.data.to)options.to=this.data.to;
+    return options;
+  },
   async load(more=false){
     if(more&&this.data.loading)return;this.setData({loading:true,error:''});
-    try{const result=await A.observations({offset:more?this.offset||0:0});
+    try{
+      const result=await A.observations({...this.range(),offset:more?this.offset||0:0});
       this.rows=more?(this.rows||[]).concat(result.items):result.items;this.offset=result.nextOffset;
-      this.setData({hasMore:result.hasMore,withheld:(more?this.data.withheld:0)+(result.withheld||0)});this.render();
+      this.setData({hasMore:result.hasMore,withheld:more?(this.data.withheld||0)+(result.withheld||0):(result.withheld||0)});this.render();
     }catch(error){failure(this,error);}
   },
   retry(){this.load();},more(){this.load(true);},onPullDownRefresh(){this.load().finally(()=>wx.stopPullDownRefresh());},
   search(e){this.setData({q:e.detail.value});this.render();},filter(e){this.setData({filter:e.currentTarget.dataset.value});this.render();},
+  setChild(e){const childIndex=Number(e.detail.value);const kid=childIndex?this.data.kids[childIndex-1]:null;this.setData({childIndex,childId:kid?kid.id:''});return this.load();},
+  setFrom(e){this.setData({from:e.detail.value});return this.load();},
+  setTo(e){this.setData({to:e.detail.value});return this.load();},
+  clearRange(){this.setData({childIndex:0,childId:'',from:'',to:''});return this.load();},
   render(){
     const q=this.data.q.trim(),filter=this.data.filter,groups=[],map={};
     (this.rows||[]).filter(row=>{const status=(row.review||{}).decision||'pending';
@@ -230,7 +252,7 @@ function exportPage(){return {
 function about(){return {
   data:{session:{},version:'1.2.0-review'},onShow(){this.setData({session:A.getSession()||{}});},
   legal(e){wx.navigateTo({url:'/pages/legal/'+e.currentTarget.dataset.type});},
-  logout(){wx.showModal({title:'退出并清除本机副本？',content:'本机草稿、示例记录及本版导出的文件将清除，正式云端记录保持不变。',success:result=>{if(result.confirm)A.logout();}});}
+  logout(){wx.showModal({title:'退出并切换身份？',content:'将返回进入页。本机草稿、示例记录及本版导出文件会清除；正式云端记录保持不变。',success:result=>{if(result.confirm)A.logout();}});}
 };}
 function legal(){return {data:{session:{}},onShow(){this.setData({session:A.getSession()||{}});}};}
 module.exports={login,feed,compose,kids,exportPage,about,legal};

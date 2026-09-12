@@ -4,7 +4,16 @@
   <view class="subtitle">留住今天值得再看一眼的瞬间。</view>
   <view wx:if="{{session.mode === 'demo'}}" class="notice demo-notice space">当前为示例体验，内置资料均为虚构。请勿录入真实儿童信息。</view>
   <button class="primary space" bindtap="compose">{{draft ? '继续未完成的手记' : '写一条观察'}}</button>
-  <input class="search space" placeholder="找孩子、原话或一次发现" value="{{q}}" bindinput="search"/>
+  <view class="sheet space">
+    <view class="row filter-row">
+      <picker class="flex" mode="selector" range="{{childOptions}}" value="{{childIndex}}" bindchange="setChild"><view class="field">{{childOptions[childIndex]}}</view></picker>
+      <picker class="flex" mode="date" value="{{from || defaultDay}}" bindchange="setFrom"><view class="field">{{from || '起始不限'}}</view></picker>
+      <picker class="flex" mode="date" value="{{to || defaultDay}}" bindchange="setTo"><view class="field">{{to || '结束不限'}}</view></picker>
+    </view>
+    <button wx:if="{{childId || from || to}}" class="quiet" bindtap="clearRange">清除孩子与日期筛选</button>
+    <view class="small">孩子和日期在读取前生效，与「回看」使用同一套范围。关键词只在已经读到的手记中查找。</view>
+  </view>
+  <input class="search space" placeholder="在已读取的手记中找原话或发现" value="{{q}}" bindinput="search" confirm-type="search"/>
   <view class="tabs"><button class="{{filter === 'all' ? 'active' : ''}}" data-value="all" bindtap="filter">全部手记</button><button class="{{filter === 'pending' ? 'active' : ''}}" data-value="pending" bindtap="filter">待回看</button><button class="{{filter === 'confirmed' ? 'active' : ''}}" data-value="confirmed" bindtap="filter">已确认</button></view>
   <view wx:if="{{error}}" class="error">{{error}}<button class="quiet" bindtap="retry">重新读取</button></view>
   <view wx:if="{{loading}}" class="small space">正在读取手记…</view>
