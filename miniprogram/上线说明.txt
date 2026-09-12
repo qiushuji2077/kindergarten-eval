@@ -4,7 +4,8 @@
 AppID：wx8e8daba1d8b01cc5
 云开发环境 ID：cloud1-d0gos8gobac3c3623
 云函数：noticeService（evalService 必须同版本或下线）
-当前代码：1.2.0-review / 分支 dev/banli-launch
+当前代码：GitHub `main`（1.2 + 整理，PR #3）
+微信开发者工具导入本目录后才是开发机上的新版；现网开发版/正式版须另行上传。
 真实班级开关：保持关闭，直到发布门槛勾完并经负责人确认
 
 本 AppID 曾同时用于「老师工具箱」和「幼儿观察记录 / 班里手记」。

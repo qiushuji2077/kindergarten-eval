@@ -9,9 +9,9 @@
 | 日常主目录 | `/Users/xiaoruirui/Downloads/班里手记` |
 | 微信开发者工具导入 | `/Users/xiaoruirui/Downloads/班里手记/miniprogram` |
 | GitHub | https://github.com/qiushuji2077/kindergarten-eval |
-| 远程跟踪基线 | `improve/banli-notes-v1.2` @ `69aebe81cc9e25513097de7ded0e8ba4fd59cc95` |
-| 当前工作分支 | `dev/banli-launch`（尚未推送、未要求提交） |
-| PR #1 | 仍为草稿，未合并：https://github.com/qiushuji2077/kindergarten-eval/pull/1 |
+| 当前分支 | `main`（跟踪 `origin/main`） |
+| 功能合并 | [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 已合入，含筛选/保存实录/去掉旧网页运行树 |
+| 已关闭 | [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1) 随 #3 合并；[PR #2](https://github.com/qiushuji2077/kindergarten-eval/pull/2) 已关闭（README 已被 1.2 说明取代） |
 | AppID | `wx8e8daba1d8b01cc5`（与老师工具箱历史共用） |
 | 云环境 ID | `cloud1-d0gos8gobac3c3623`（代码中的现有值，未改线上） |
 
@@ -57,12 +57,12 @@ node scripts/build-preview.js
 
 ## 回滚
 
-- Git：丢弃 `dev/banli-launch` 工作区，或重新检出 `improve/banli-notes-v1.2` / `main`。
-- 线上：未授权覆盖，故现网回滚仍取决于公众平台里当前版本；覆盖前必须先备份。
+- Git：`git revert` 合并提交，或将 `main` 回退到合并前的 `a520820`（须负责人确认，不使用强推除非明确要求）。
+- 线上：GitHub 合并不会改微信现网；现网回滚仍取决于公众平台里当前版本。
 - 旧目录：废纸篓还原。
 
 ## 剩余问题
 
 - 微信开发者工具 CLI 报「需要重新登录」，本轮未能原生编译、预览或真机。
 - 真实云函数、安全规则、混元调用、媒体权限、Word 真机排版未测。
-- 未合并 PR、未推送分支、未提交审核。
+- GitHub 已合并并推送；未上传小程序代码、未提交审核。

@@ -6,7 +6,7 @@
 
 | 检查 | 结果 | 证据 |
 | --- | --- | --- |
-| 旧目录 Git / PR #1 | 幼儿园在 `export-ai-motion`，有未提交网页修改；老师工具箱无 Git；PR 仍为草稿，头提交仍为 `69aebe8` | 当时 `git status` / `gh pr view` |
+| 旧目录 Git / PR | 整理当时幼儿园在 `export-ai-motion`；PR #1 其后已随 PR #3 合入 `main` | 当时检查记录；现 GitHub PR #3 |
 | 克隆 1.2 并建工作分支 | `dev/banli-launch` @ `69aebe81cc9e25513097de7ded0e8ba4fd59cc95` | `git log -1` |
 | 归档核对 | bundle 可克隆；补丁可 apply --check；未跟踪 7 文件哈希一致；SQLite 表计数一致；14 个上传文件保全 | `archive-local/`、`SHA256SUMS.txt` |
 | `npm test` | 55 通过，0 失败 | 本轮终端输出 |
@@ -25,8 +25,10 @@
 - iOS / Android 真机
 - 真实云函数部署、数据库规则、存储规则、混元调用
 - 真实媒体、外发 Word 在 WPS / Microsoft Word 中的图文
-- 合并 PR、推送分支、上传代码、提交审核、开通付费、迁移或删除云端数据
+- 上传小程序代码、提交微信审核、开通付费、迁移或删除云端数据
 - 清空废纸篓或永久删除
+
+已于 2026-09-12 将 `dev/banli-launch` 经 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 合并并推送到 `main`。
 
 ## 与发布门槛的关系
 

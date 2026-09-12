@@ -8,9 +8,9 @@
 
 ## 当前状态
 
-工作目录：`/Users/xiaoruirui/Downloads/班里手记`。当前开发分支 `dev/banli-launch` 基于 1.2 评审提交 `69aebe8`。
+工作目录：`/Users/xiaoruirui/Downloads/班里手记`。GitHub `main` 已合并 1.2 与后续整理（[PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3)）。
 
-这是待联调的开发版。代码修改不等于微信平台已部署或已通过审核。真实班级默认关闭；请先用虚构示例走通。GitHub `main` 与线上开发版仍是 1.1 基线，在未确认前不要覆盖。
+这是待联调的开发版。**仓库代码已更新，不等于微信平台已部署或已通过审核。** 真实班级默认关闭；请先用虚构示例走通。覆盖现网开发版或正式版前须再确认。
 
 旧网页 `client/`、`server/` 已从当前运行树移除，源码与未提交修改保存在 `archive-local/`（Git 忽略）和 Git 历史中。不要把旧网页后端对外部署给真实儿童数据。老师工具箱是另一个历史产品，资产同样只在归档区。
 

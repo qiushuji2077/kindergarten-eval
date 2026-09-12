@@ -13,7 +13,7 @@
 
 | 项 | 结果 |
 | --- | --- |
-| PR #1 | 仍为草稿、未合并；头提交 `69aebe81cc9e25513097de7ded0e8ba4fd59cc95`；分支 `improve/banli-notes-v1.2` |
+| PR #1 / #3 | 1.2 与后续整理已由 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 合入 `main`；PR #1 随之为已合并 |
 | 新目录 | 原先为空目录，已按该分支克隆并建立 `dev/banli-launch`，未覆盖、未嵌套第二份仓库 |
 | Git bundle | `git bundle verify` 通过，并从 bundle 克隆出 `export-ai-motion` / `main` / `priority` |
 | 未提交补丁 | 对 784b765 执行 `git apply --check` 通过 |
