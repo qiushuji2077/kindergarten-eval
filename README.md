@@ -8,9 +8,11 @@
 
 ## 当前状态
 
-工作目录：`/Users/xiaoruirui/Downloads/班里手记`。GitHub `main` 已合并 1.2 与后续整理（[PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3)）。
+工作目录：`/Users/xiaoruirui/Downloads/班里手记`。
 
-这是待联调的开发版。**仓库代码已更新，不等于微信平台已部署或已通过审核。** 真实班级默认关闭；请先用虚构示例走通。覆盖现网开发版或正式版前须再确认。
+**GitHub `main` 已是班里手记 1.2，且为仓库内唯一运行版本。** [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1) 评审稿已合入；[PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 去掉日常 `client/`、`server/`，只留原生小程序。`package.json` 为 1.2.0（上线说明写 1.2.0-review）。
+
+**仓库 `main` 不是现网已上线的 1.2。** 当前云函数与安全规则尚未按本仓库部署，微信审核尚未提交。真实班级开关 `BANLI_FORMAL_ENABLED` 仍默认关闭。线上开发版/正式版仍可能是旧包（1.1 或老师工具箱）。请先用虚构示例走通；覆盖现网前须再确认。
 
 旧网页 `client/`、`server/` 已从当前运行树移除，源码与未提交修改保存在 `archive-local/`（Git 忽略）和 Git 历史中。不要把旧网页后端对外部署给真实儿童数据。老师工具箱是另一个历史产品，资产同样只在归档区。
 

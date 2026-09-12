@@ -13,8 +13,8 @@
 
 | 项 | 结果 |
 | --- | --- |
-| PR #1 / #3 | 1.2 与后续整理已由 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 合入 `main`；PR #1 随之为已合并 |
-| 新目录 | 原先为空目录，已按该分支克隆并建立 `dev/banli-launch`，未覆盖、未嵌套第二份仓库 |
+| PR | [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1) 已合并（1.2 评审稿 `69aebe81`）；[PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 已合并（唯一运行树 `23be6f2`）；[PR #2](https://github.com/qiushuji2077/kindergarten-eval/pull/2) 关闭未合并 |
+| 新目录 | 整理当时按评审分支克隆并建立 `dev/banli-launch`，未覆盖、未嵌套第二份仓库；该分支已由 PR #3 合入 `main`，现日常树即 `main` |
 | Git bundle | `git bundle verify` 通过，并从 bundle 克隆出 `export-ai-motion` / `main` / `priority` |
 | 未提交补丁 | 对 784b765 执行 `git apply --check` 通过 |
 | 未跟踪文件 | 7 个文件副本哈希与源一致 |

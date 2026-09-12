@@ -6,7 +6,7 @@
 
 | 检查 | 结果 | 证据 |
 | --- | --- | --- |
-| 旧目录 Git / PR | 整理当时幼儿园在 `export-ai-motion`；PR #1 其后已随 PR #3 合入 `main` | 当时检查记录；现 GitHub PR #3 |
+| 旧目录 Git / PR | 整理当时幼儿园在 `export-ai-motion`；其后 [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1)（评审稿）与 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3)（唯一运行树）均已合入 `main` | 当时检查记录；现 GitHub PR 状态 |
 | 克隆 1.2 并建工作分支 | `dev/banli-launch` @ `69aebe81cc9e25513097de7ded0e8ba4fd59cc95` | `git log -1` |
 | 归档核对 | bundle 可克隆；补丁可 apply --check；未跟踪 7 文件哈希一致；SQLite 表计数一致；14 个上传文件保全 | `archive-local/`、`SHA256SUMS.txt` |
 | `npm test` | 55 通过，0 失败 | 本轮终端输出 |
@@ -28,7 +28,7 @@
 - 上传小程序代码、提交微信审核、开通付费、迁移或删除云端数据
 - 清空废纸篓或永久删除
 
-已于 2026-09-12 将 `dev/banli-launch` 经 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 合并并推送到 `main`。
+已于 2026-09-12 将 `dev/banli-launch` 经 [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 合并并推送到 `main`。GitHub 主线因此已是 1.2 唯一运行树；现网云函数/规则与微信审核仍未按本仓库执行，真实班级开关仍关。
 
 ## 与发布门槛的关系
 

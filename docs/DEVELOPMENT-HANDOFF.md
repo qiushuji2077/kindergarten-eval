@@ -9,9 +9,11 @@
 | 日常主目录 | `/Users/xiaoruirui/Downloads/班里手记` |
 | 微信开发者工具导入 | `/Users/xiaoruirui/Downloads/班里手记/miniprogram` |
 | GitHub | https://github.com/qiushuji2077/kindergarten-eval |
-| 当前分支 | `main`（跟踪 `origin/main`） |
-| 功能合并 | [PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 已合入，含筛选/保存实录/去掉旧网页运行树 |
-| 已关闭 | [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1) 随 #3 合并；[PR #2](https://github.com/qiushuji2077/kindergarten-eval/pull/2) 已关闭（README 已被 1.2 说明取代） |
+| 当前基线 | `main`（跟踪 `origin/main`）。班里手记 1.2 为唯一运行树 |
+| 已合并 | [PR #1](https://github.com/qiushuji2077/kindergarten-eval/pull/1) 1.2 评审稿（`69aebe81`）；[PR #3](https://github.com/qiushuji2077/kindergarten-eval/pull/3) 去掉日常网页、筛选与保存实录（`23be6f2`） |
+| 已关闭未合并 | [PR #2](https://github.com/qiushuji2077/kindergarten-eval/pull/2)（仅对齐 1.1 叙事的 README，已被 1.2 说明取代） |
+| 真实班级 | `BANLI_FORMAL_ENABLED` 默认 false |
+| 现网微信 | **未**按本仓库覆盖云函数/规则，**未**提交审核；不要把 `main` 写成现网已是 1.2 |
 | AppID | `wx8e8daba1d8b01cc5`（与老师工具箱历史共用） |
 | 云环境 ID | `cloud1-d0gos8gobac3c3623`（代码中的现有值，未改线上） |
 
@@ -65,4 +67,4 @@ node scripts/build-preview.js
 
 - 微信开发者工具 CLI 报「需要重新登录」，本轮未能原生编译、预览或真机。
 - 真实云函数、安全规则、混元调用、媒体权限、Word 真机排版未测。
-- GitHub 已合并并推送；未上传小程序代码、未提交审核。
+- GitHub `main` 已是 1.2 唯一运行树；未部署当前云函数/规则，未提交微信审核。真实班级开关仍关。
