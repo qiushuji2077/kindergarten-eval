@@ -1,1 +1,1 @@
-{ "desc": "幼儿观察记录", "rules": [{ "action": "allow", "page": "*" }] }
+{"rules":[{"action":"disallow","page":"*"}]}

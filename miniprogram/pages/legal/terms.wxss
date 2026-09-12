@@ -1,3 +1,1 @@
-@import '../../styles/common.wxss';
-.legal { padding: 8rpx 32rpx 48rpx; font-size: 28rpx; color: #3c3c43; line-height: 1.65; }
-.legal .h { font-size: 32rpx; font-weight: 600; color: #000; margin: 28rpx 0 8rpx; }
+.legal-copy{font-size:30rpx;line-height:1.85}.legal-copy .section-title{margin-top:36rpx}.legal-copy text{display:block;margin-bottom:16rpx}

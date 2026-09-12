@@ -1,71 +1,35 @@
-<view class="page">
-  <textarea
-    class="area"
-    placeholder="点这里写。键盘上可直接用微信语音转成文字。"
-    value="{{narrative}}"
-    bindinput="onText"
-    confirm-type="done"
-    adjust-position="{{true}}"
-    hold-keyboard="{{true}}"
-    show-confirm-bar="{{true}}"
-    maxlength="2000"
-  />
-  <view class="tools">
-    <button class="tool" hover-class="none" bindtap="chooseShot">照片/视频</button>
-    <button
-      class="tool {{listening ? 'on' : ''}}"
-      hover-class="none"
-      bindtouchstart="voiceStart"
-      bindtouchend="voiceEnd"
-      bindtouchcancel="voiceEnd"
-      catchtouchmove="voiceMove"
-    >{{listening ? '松手完成' : '按住说话'}}</button>
-  </view>
-  <view class="recording" wx:if="{{listening}}">正在听，松开后会转成文字</view>
-  <view class="hint">{{hint}}</view>
-  <view class="preview" wx:if="{{files.length}}">
-    <view class="thumb-wrap" wx:for="{{files}}" wx:key="id">
-      <image wx:if="{{item.kind === 'photo'}}" src="{{item.path}}" mode="aspectFill" />
-      <view wx:elif="{{item.kind === 'audio'}}" class="audio-tile">声</view>
-      <video wx:else src="{{item.path}}" object-fit="cover" controls="{{false}}" show-center-play-btn="{{false}}" />
-      <view class="x" catchtap="removeFile" data-id="{{item.id}}">×</view>
-    </view>
-  </view>
-  <view class="section">观察对象</view>
-  <view class="chip-wrap">
-    <view class="chip {{item.on ? 'on' : ''}} {{editing ? 'locked' : ''}}" wx:for="{{kids}}" wx:key="id" data-id="{{item.id}}" bindtap="toggleKid">{{item.name}}</view>
-  </view>
-  <view class="section">时间</view>
-  <view class="group">
-    <view class="cell">
-      <text class="name">观察时间</text>
-      <view class="time-box">
-        <text class="clock">{{clock}}</text>
-        <text class="frozen-tag" wx:if="{{frozen}}">已冻结</text>
-      </view>
-    </view>
-  </view>
-  <view class="section">{{matchTitle}}</view>
-  <view class="interpret" wx:if="{{interpret}}">{{interpret}}</view>
-  <view class="empty" wx:if="{{!hits.length}}" style="padding: 20rpx 32rpx; text-align: left;">写实录后，会对应到《3—6岁指南》。云开发 AI 不可用时，改用字段捕捉。</view>
-  <view class="hit" wx:for="{{hits}}" wx:key="id">
-    <view class="hit-title">{{item.domain}} · {{item.goal}}</view>
-    <view class="hit-sub">{{item.area}} · {{item.sourceLabel}}{{item.keywordText ? ' · 捕捉：' + item.keywordText : ''}}{{item.reason ? ' · ' + item.reason : ''}}</view>
-  </view>
-  <view class="error" wx:if="{{error}}">{{error}}</view>
-  <view class="btn {{canPost ? '' : 'ghost'}}" bindtap="submit">{{submitText}}</view>
-  <view class="privacy-mask" wx:if="{{showPrivacy}}">
-    <view class="privacy-card">
-      <view class="privacy-title">{{privacyContractName}}</view>
-      <view class="privacy-body">拍照、选相册或录音前，需要同意隐私保护指引。幼儿观察照片仅用于本班记录和导出报告。</view>
-      <view class="privacy-link" bindtap="openPrivacyDoc">查看全文</view>
-      <button
-        id="agree-privacy-btn"
-        class="privacy-ok"
-        open-type="agreePrivacyAuthorization"
-        bindagreeprivacyauthorization="onAgreePrivacy"
-      >同意</button>
-      <view class="privacy-no" bindtap="onDisagreePrivacy">不同意</view>
-    </view>
-  </view>
+<view class="page compose-page">
+  <view class="row"><view class="eyebrow">01 · 先留下发生的事</view><text class="small">{{editing ? '已保存的观察' : '新手记'}}</text></view>
+  <view class="title">这一刻，我看见…</view>
+  <view class="subtitle">保留动作、原话与情境，给理解留一点空间。</view>
+  <view wx:if="{{session.mode === 'demo'}}" class="notice demo-notice space">示例体验，请勿记录真实儿童信息。<button wx:if="{{!editing}}" class="quiet" bindtap="example">填入「积木倒下以后」示例</button></view>
+  <view class="label">观察对象</view>
+  <view class="chips"><button wx:for="{{kids}}" wx:key="id" class="chip {{item.on ? 'on' : ''}}" data-id="{{item.id}}" bindtap="kid">{{item.name}}</button></view>
+  <view wx:if="{{!kids.length}}" class="small">暂无可用名单，请先到「孩子」页添加观察对象。</view>
+  <view class="label">当时的情境</view>
+  <view class="chips"><button wx:for="{{scenes}}" wx:key="*this" class="chip {{scene === item ? 'on' : ''}}" data-value="{{item}}" bindtap="scene">{{item}}</button></view>
+  <view class="notebook space"><textarea value="{{narrative}}" bindinput="text" maxlength="2000" auto-height="true" placeholder="例如：积木倒了，他扶住底下的一块，对同伴说……" cursor-spacing="160" adjust-position="{{true}}" hold-keyboard="{{true}}" show-confirm-bar="{{true}}"/><view class="small count">{{narrative.length}} / 2000</view></view>
+  <view class="row space"><button class="secondary flex" bindtap="chooseMedia">照片 / 视频</button><button class="secondary flex" bindtap="voice">{{recording ? '结束录音' : '留一段声音'}}</button></view>
+  <view class="small space">录音会保留为附件。需要转文字时，可用输入法语音，读一遍后再保存。</view>
+  <view class="media-grid"><view wx:for="{{files}}" wx:key="id" class="media-item"><image wx:if="{{item.kind === 'photo'}}" src="{{item.path}}" mode="aspectFit"/><video wx:elif="{{item.kind === 'video'}}" src="{{item.path}}" controls="true"/><button wx:else="" class="secondary" bindtap="playAudio" data-id="{{item.id}}">播放录音</button><button wx:if="{{!item.existing}}" class="quiet" bindtap="removeFile" data-id="{{item.id}}">移除附件</button></view></view>
+  <view class="row time-row"><text class="small">观察时间</text><picker mode="date" value="{{date}}" bindchange="date" disabled="{{editing}}"><text class="small">{{date}}</text></picker><picker mode="time" value="{{time}}" bindchange="time" disabled="{{editing}}"><text class="small">{{time}}</text></picker></view>
+  <view wx:if="{{editing}}" class="small">保存后的时间与观察对象保持不变，实录修改保留首版原文。</view>
+  <view wx:if="{{conflictText}}" class="notice space">待对照的本机草稿：{{conflictText}}</view>
+  <view wx:if="{{original}}" class="notice space">首版实录：{{original}}</view>
+  <view class="rule"></view>
+  <view class="eyebrow">02 · 有空时，再看一眼</view>
+  <view class="section-title space">这段经历，还能怎样理解？</view>
+  <view class="small">AI只提出可能的线索，允许没有匹配。你可以先保存实录，稍后再回来。</view>
+  <button class="secondary space" bindtap="prepare" loading="{{analyzing}}" disabled="{{analyzing || busy}}">{{analyzing ? '正在整理' : '请 AI 帮我找线索'}}</button>
+  <view wx:if="{{aiMessage}}" class="notice space">{{aiMessage}}</view>
+  <view wx:if="{{suggestions.length}}" class="small space">{{source === 'ai' ? '模型辅助 · 待专业核对' : '规则线索 · 未调用模型作判断'}}<text>
+</text>以下为本项目整理的观察方向，均非《指南》逐字原文。</view>
+  <view wx:for="{{suggestions}}" wx:key="id" class="clue"><view class="row"><text class="clue-title">{{item.goal}}</text><text class="small">{{item.domain}}</text></view><view class="evidence">“{{item.evidence}}”</view><view class="clue-copy">{{item.reason}}</view><view class="clue-next">继续观察 · {{item.next}}</view></view>
+  <view class="space"><view class="section-title">判断，留在你手里。</view><view class="chips"><button class="chip {{review.decision === 'accepted' ? 'on' : ''}}" data-value="accepted" bindtap="decide">采纳线索</button><button class="chip {{review.decision === 'adjusted' ? 'on' : ''}}" data-value="adjusted" bindtap="decide">我来调整</button><button class="chip {{review.decision === 'ignored' ? 'on' : ''}}" data-value="ignored" bindtap="decide">仅留实录</button></view></view>
+  <block wx:if="{{review.decision === 'accepted' || review.decision === 'adjusted'}}"><view class="label">教师的理解</view><textarea class="teacher-note" value="{{review.note}}" bindinput="note" maxlength="1000" auto-height="true" cursor-spacing="160" adjust-position="{{true}}" hold-keyboard="{{true}}" placeholder="结合当时的情境，你怎样理解这一次经历？"/><view class="label">下一次，我想继续留意</view><textarea class="teacher-note" value="{{review.next}}" bindinput="next" maxlength="400" auto-height="true" cursor-spacing="160" adjust-position="{{true}}" hold-keyboard="{{true}}" placeholder="写下一个值得继续观察的问题。"/></block>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <button wx:if="{{editing}}" class="quiet danger space" bindtap="remove">删除这条观察与附件</button>
+  <view class="save-bar"><view class="small">{{draftStatus}} · {{reviewLabel}}。线索可稍后再看，先把实录留下。</view><button class="primary" bindtap="submit" loading="{{busy}}" disabled="{{busy || !canPost || analyzing}}">{{editing ? '保存修改' : '保存实录'}}</button></view>
 </view>
+<view wx:if="{{previewOpen}}" class="preview-mask"><view class="preview-sheet"><view class="section-title">发送前，再看一眼。</view><view class="small">已尝试隐藏名单内姓名、班级和常见联系方式。仍可能遗漏身份信息，请检查并只删改身份内容，保留事件事实。照片、视频和声音不会发送给模型。语音附件与自动转文字不是同一件事；本版不会把录音自动变成文字。</view><textarea value="{{previewText}}" bindinput="previewText" maxlength="2000" cursor-spacing="120" adjust-position="{{true}}"/><view class="privacy-buttons"><button class="secondary" bindtap="closePreview" disabled="{{analyzing}}">返回</button><button class="primary" bindtap="analyze" loading="{{analyzing}}" disabled="{{analyzing}}">检查好了，继续</button></view></view></view>
+<view wx:if="{{showPrivacy}}" class="preview-mask"><view class="preview-sheet"><view class="section-title">使用照片与声音前</view><view class="subtitle">请阅读{{privacyContractName}}。教师的设备授权与监护人的儿童信息授权分别办理。</view><button class="quiet" bindtap="openPrivacyDoc">阅读隐私保护指引</button><view class="privacy-buttons"><button class="secondary" bindtap="onDisagreePrivacy">暂不使用</button><button id="agree-privacy-btn" class="primary" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgreePrivacy">同意并继续</button></view></view></view>

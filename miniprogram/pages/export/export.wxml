@@ -1,19 +1,11 @@
 <view class="page">
-  <view class="title">导出</view>
-  <view class="lead">{{hint}}</view>
-  <view class="lead">导出时会写入 AI 发展综述，供教研参考。</view>
-  <view class="section">园所名称（写入报告封面）</view>
-  <input class="search" placeholder="可不填。不填则封面只写「幼儿园」" value="{{kindergartenName}}" bindinput="onKgName" />
-  <view class="section">按幼儿导出</view>
-  <view class="group">
-    <view class="cell" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="exportChild">
-      <view>
-        <view class="name">{{item.name}}</view>
-        <view class="sub">{{item.class_name}}</view>
-      </view>
-      <text class="mark">导出</text>
-    </view>
-  </view>
-  <view class="btn" style="background:#e5e5ea;color:#000;font-weight:500" bindtap="logout">切换教师</view>
-  <view class="error" wx:if="{{error}}">{{error}}</view>
+  <view class="eyebrow">回到那些真实发生的时刻</view><view class="title">把零散的手记，<text>
+</text>读成一段成长。</view><view class="subtitle">先回看，再汇总。尚未确认的AI建议不会写入正式解读。</view>
+  <view wx:if="{{session.mode === 'demo'}}" class="notice demo-notice space">报告会明确标注“示例体验”，不作为真实儿童发展记录。</view>
+  <view class="sheet space"><view class="label">为谁回看</view><picker mode="selector" range="{{kids}}" range-key="name" value="{{kidIndex}}" bindchange="kid"><view class="field">{{kids.length ? kids[kidIndex].name : '请先准备观察名单'}}</view></picker><view class="row space"><view class="flex"><view class="label">从这一天</view><picker mode="date" value="{{from}}" bindchange="from"><view class="field">{{from}}</view></picker></view><view class="flex"><view class="label">到这一天</view><picker mode="date" value="{{to}}" bindchange="to"><view class="field">{{to}}</view></picker></view></view><view class="small">导出范围按孩子和日期在读取前过滤，与手记页相同；分页之后不会漏掉该范围内的记录。</view><button class="primary space" bindtap="review" loading="{{busy}}" disabled="{{busy}}">回看这段时间的手记</button></view>
+  <view wx:if="{{loaded}}" class="space"><view class="section-title">授权范围内的 {{rows.length}} 条观察</view><view wx:if="{{!rows.length}}" class="empty">这个时间段还没有手记。<text>
+</text>换一个日期范围，再看一看。</view><view wx:for="{{rows}}" wx:key="id" class="review-row"><view class="row"><text class="small">{{item.when}}</text><text class="pill">{{item.status}}</text></view><view class="review-copy">{{item.narrative || '照片或声音记录'}}</view></view></view>
+  <view wx:if="{{loaded &amp;&amp; rows.length}}"><view class="rule"></view><view class="section-title">这段时间，我的理解</view><view class="small">回到具体证据写摘要，保留不确定处。这里的内容由教师编辑。未确认的辅助线索不会进入 Word 正式解读。</view><button class="quiet" bindtap="draftSummary">汇集已确认的教师摘记</button><textarea class="summary-area" value="{{summary}}" bindinput="summary" maxlength="2000" auto-height="true" cursor-spacing="160" adjust-position="{{true}}" hold-keyboard="{{true}}" placeholder="哪些经历反复出现？孩子尝试了什么？接下来准备怎样支持？"/><view class="row space"><view class="flex"><view>在Word中放入照片</view><view class="small">每条最多2张。音视频留在小程序内，不生成公开链接。</view></view><switch checked="{{includePhotos}}" color="#244D3F" bindchange="photos"/></view><button class="primary space" bindtap="download" loading="{{busy}}" disabled="{{busy}}">生成并预览 Word</button><button wx:if="{{filePath}}" class="secondary space" bindtap="share">分享这份汇总</button></view>
+  <view wx:if="{{reportHint}}" class="notice space">{{reportHint}}</view><view wx:if="{{error}}" class="error">{{error}}</view><view class="footer-note">分享前核对接收人。<text>
+</text>已导出的文件不会随云端记录删除而自动撤回。</view>
 </view>

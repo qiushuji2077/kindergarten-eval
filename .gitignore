@@ -10,3 +10,5 @@ server/data/
 .env
 .env.*
 *.local
+archive-local/
+preview/
